@@ -7,15 +7,15 @@ public partial class User
 {
     public int UserId { get; set; }
 
-    public string UserEmail { get; set; } = null!;
+    public string? UserEmail { get; set; }
 
-    public string Upassword { get; set; } = null!;
+    public string? Upassword { get; set; }
 
-    public string FullName { get; set; } = null!;
+    public string? FullName { get; set; } 
 
-    public string Phone { get; set; } = null!;
+    public string? Phone { get; set; } 
 
-    public string UserAddress { get; set; } = null!;
+    public string? UserAddress { get; set; }
 
     public bool? LoginStatus { get; set; }
 

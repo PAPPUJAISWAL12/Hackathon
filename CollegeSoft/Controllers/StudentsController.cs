@@ -22,32 +22,25 @@ namespace CollegeSoft.Controllers
 
         // GET: api/Students
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Student>>> GetStudents()
-        {
-          if (_context.Students == null)
-          {
-              return NotFound();
-          }
-            return await _context.Students.ToListAsync();
+        public async Task<ActionResult<IEnumerable<StudentView>>> GetStudents()
+        {          
+            return await _context.StudentViews.ToListAsync();
         }
+
 
         // GET: api/Students/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Student>> GetStudent(int id)
-        {
-          if (_context.Students == null)
-          {
-              return NotFound();
-          }
-            var student = await _context.Students.FindAsync(id);
+        public async Task<ActionResult<StudentView>> GetStudent(int id)
+        {          
+            var student =  _context.StudentViews.Where(x=>x.StdId==id).FirstOrDefault();
 
             if (student == null)
             {
                 return NotFound();
             }
-
             return student;
         }
+
 
         // PUT: api/Students/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
@@ -83,38 +76,39 @@ namespace CollegeSoft.Controllers
         // POST: api/Students
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Student>> PostStudent(Student student)
+        public async Task<ActionResult<StudentEdit>> PostStudent(StudentEdit edit)
         {
-          if (_context.Students == null)
-          {
-              return Problem("Entity set 'NamunaCollegeContext.Students'  is null.");
-          }
-            _context.Students.Add(student);
+            User u=new User
+            {
+                UserEmail=edit.UserEmail,
+                FullName=edit.FullName,
+                UserAddress=edit.UserAddress,
+                Phone=edit.Phone,
+                Upassword=edit.Upassword,
+                LoginStatus=edit.LoginStatus
+            };
+            _context.Users.Add(u);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetStudent", new { id = student.StdId }, student);
-        }
-
-        // DELETE: api/Students/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteStudent(int id)
-        {
-            if (_context.Students == null)
+            Student std = new Student
             {
-                return NotFound();
-            }
-            var student = await _context.Students.FindAsync(id);
-            if (student == null)
-            {
-                return NotFound();
-            }
-
-            _context.Students.Remove(student);
+                UserId=u.UserId,
+                Cid=edit.Cid
+            };
+            _context.Students.Add(std);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            UserRole r = new UserRole
+            {
+                UserId=u.UserId,
+                RoleId=edit.RoleId
+            };
+            _context.UserRoles.Add(r);
+            await _context.SaveChangesAsync();
+            return Ok(edit);
         }
 
+       
         private bool StudentExists(int id)
         {
             return (_context.Students?.Any(e => e.StdId == id)).GetValueOrDefault();

@@ -7,11 +7,9 @@ public partial class Document
 {
     public int DocId { get; set; }
 
-    public int UploadId { get; set; }
-
     public int UserId { get; set; }
 
-    public virtual Upload Upload { get; set; } = null!;
+    public virtual ICollection<UploadFile> UploadFiles { get; set; } = new List<UploadFile>();
 
-    public virtual User User { get; set; } = null!;
+    public virtual User? User { get; set; }
 }

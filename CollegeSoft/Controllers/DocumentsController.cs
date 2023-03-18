@@ -22,27 +22,17 @@ namespace CollegeSoft.Controllers
 
         // GET: api/Documents
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Document>>> GetDocuments()
+        public async Task<ActionResult<IEnumerable<UploadFileView>>> GetDocuments()
         {
-          if (_context.Documents == null)
-          {
-              return NotFound();
-          }
-            return await _context.Documents.ToListAsync();
+            return await _context.UploadFileViews.ToListAsync();
         }
 
         // GET: api/Documents/5
         [HttpGet("{id}")]
-        public ActionResult<Document> GetDocument(int id)
+        public ActionResult<UploadFileView> GetDocument(int id)
         {
-
-            var document = _context.Documents.Where(x => x.DocId == id).FirstOrDefault();         
-       
-			if (document == null)
-			{
-				return NotFound();
-			}
-			return document;
+            var document = _context.UploadFileViews.Where(x => x.DocId == id).FirstOrDefault();      
+			return Ok(document);
 		}
 
         // PUT: api/Documents/5
@@ -79,13 +69,28 @@ namespace CollegeSoft.Controllers
         // POST: api/Documents
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Document>> PostDocument(Document document)
+        public async Task<ActionResult<DocumentEdit>> PostDocument(DocumentEdit DocEdit)
         {
-          
+            Document document = new Document
+            {
+                UserId=DocEdit.UserId
+            };
             _context.Documents.Add(document);
             await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetDocument", new { id = document.DocId }, document);
+            foreach(UploadFile f in DocEdit.UploadFiles)
+            {
+                if (f.DocFile != null)
+                {
+                    f.DocId = document.DocId;
+                    _context.UploadFiles.Add(f);
+                }
+                else
+                {
+                    return BadRequest();
+                }
+            }
+            await _context.SaveChangesAsync();
+            return Ok("Insert Successfully");
         }
 
         // DELETE: api/Documents/5

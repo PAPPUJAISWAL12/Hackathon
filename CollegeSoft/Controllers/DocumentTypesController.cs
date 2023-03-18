@@ -11,49 +11,48 @@ namespace CollegeSoft.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class RoleListsController : ControllerBase
+    public class DocumentTypesController : ControllerBase
     {
         private readonly NamunaCollegeContext _context;
 
-        public RoleListsController(NamunaCollegeContext context)
+        public DocumentTypesController(NamunaCollegeContext context)
         {
             _context = context;
         }
 
-        // GET: api/RoleLists
+        // GET: api/DocumentTypes
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<RoleList>>> GetRoleLists()
+        public async Task<ActionResult<IEnumerable<DocumentType>>> GetDocumentTypes()
         {
-          
-            return await _context.RoleLists.ToListAsync();
+            return await _context.DocumentTypes.ToListAsync();
         }
 
-        // GET: api/RoleLists/5
+        // GET: api/DocumentTypes/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<RoleList>> GetRoleList(int id)
+        public async Task<ActionResult<DocumentType>> GetDocumentType(int id)
         {
          
-            var roleList = await _context.RoleLists.FindAsync(id);
+            var documentType = await _context.DocumentTypes.FindAsync(id);
 
-            if (roleList == null)
+            if (documentType == null)
             {
                 return NotFound();
             }
 
-            return roleList;
+            return documentType;
         }
 
-        // PUT: api/RoleLists/5
+        // PUT: api/DocumentTypes/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutRoleList(int id, RoleList roleList)
+        public async Task<IActionResult> PutDocumentType(int id, DocumentType documentType)
         {
-            if (id != roleList.RoleId)
+            if (id != documentType.TypeId)
             {
                 return BadRequest();
             }
 
-            _context.Entry(roleList).State = EntityState.Modified;
+            _context.Entry(documentType).State = EntityState.Modified;
 
             try
             {
@@ -61,7 +60,7 @@ namespace CollegeSoft.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!RoleListExists(id))
+                if (!DocumentTypeExists(id))
                 {
                     return NotFound();
                 }
@@ -74,20 +73,23 @@ namespace CollegeSoft.Controllers
             return NoContent();
         }
 
-        // POST: api/RoleLists
+        // POST: api/DocumentTypes
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<RoleList>> PostRoleList(RoleList roleList)
-        {          
-            _context.RoleLists.Add(roleList);
+        public async Task<ActionResult<DocumentType>> PostDocumentType(DocumentType documentType)
+        {
+          
+            _context.DocumentTypes.Add(documentType);
             await _context.SaveChangesAsync();
-            return Ok(roleList);
+
+            return CreatedAtAction("GetDocumentType", new { id = documentType.TypeId }, documentType);
         }
 
+        
 
-        private bool RoleListExists(int id)
+        private bool DocumentTypeExists(int id)
         {
-            return (_context.RoleLists?.Any(e => e.RoleId == id)).GetValueOrDefault();
+            return (_context.DocumentTypes?.Any(e => e.TypeId == id)).GetValueOrDefault();
         }
     }
 }

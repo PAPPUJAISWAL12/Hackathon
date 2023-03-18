@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CollegeSoft.Models;
+using Azure;
+using Microsoft.AspNetCore.JsonPatch;
+using NuGet.Protocol.Plugins;
 
 namespace CollegeSoft.Controllers
 {
@@ -22,24 +25,18 @@ namespace CollegeSoft.Controllers
 
         // GET: api/Receptions
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Reception>>> GetReceptions()
+        public async Task<ActionResult<IEnumerable<ReceptionView>>> GetReceptions()
         {
-          if (_context.Receptions == null)
-          {
-              return NotFound();
-          }
-            return await _context.Receptions.ToListAsync();
+         
+            return await _context.ReceptionViews.ToListAsync();
         }
 
         // GET: api/Receptions/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Reception>> GetReception(int id)
+        public ActionResult<ReceptionView> GetReception(int id)
         {
-          if (_context.Receptions == null)
-          {
-              return NotFound();
-          }
-            var reception = await _context.Receptions.FindAsync(id);
+          
+            var reception =  _context.ReceptionViews.Where(x=>x.Rid==id).FirstOrDefault();
 
             if (reception == null)
             {
@@ -51,51 +48,44 @@ namespace CollegeSoft.Controllers
 
         // PUT: api/Receptions/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutReception(int id, Reception reception)
+        [HttpPatch("{id}")]
+        public IActionResult PatchReception(int id, [FromBody] JsonPatchDocument<Reception> patchdoc)
         {
-            if (id != reception.Rid)
+            Reception? reception = _context.Receptions.FirstOrDefault(x=>x.Rid==id);
+            if (reception == null)
             {
-                return BadRequest();
+                return NotFound();
             }
-
-            _context.Entry(reception).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ReceptionExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            patchdoc.ApplyTo(reception);
+            _context.SaveChanges();
+            return Ok(reception);
         }
 
         // POST: api/Receptions
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Reception>> PostReception(Reception reception)
+        public async Task<ActionResult<ReceptionEdit>> PostReception(ReceptionEdit reception)
         {
-          if (_context.Receptions == null)
-          {
-              return Problem("Entity set 'NamunaCollegeContext.Receptions'  is null.");
-          }
-            _context.Receptions.Add(reception);
+            reception.EntryDate = DateTime.Today;
+            reception.EntryTime = DateTime.UtcNow.AddMinutes(345).ToShortTimeString();
+
+            Reception r = new Reception
+            {
+                EntryDate=reception.EntryDate,
+                EntryTime=reception.EntryTime,
+                Purpose=reception.Purpose,
+                PersonAddress=reception.PersonAddress,
+                Phone=reception.Phone,
+                UserId=reception.UserId,
+                FiscalYear=reception.FiscalYear
+            };
+            _context.Receptions.Add(r);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetReception", new { id = reception.Rid }, reception);
+            return Ok(r);
         }
 
-        // DELETE: api/Receptions/5
+       /* // DELETE: api/Receptions/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteReception(int id)
         {
@@ -114,7 +104,7 @@ namespace CollegeSoft.Controllers
 
             return NoContent();
         }
-
+*/
         private bool ReceptionExists(int id)
         {
             return (_context.Receptions?.Any(e => e.Rid == id)).GetValueOrDefault();

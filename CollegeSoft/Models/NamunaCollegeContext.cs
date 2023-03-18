@@ -19,6 +19,8 @@ public partial class NamunaCollegeContext : DbContext
 
     public virtual DbSet<Document> Documents { get; set; }
 
+    public virtual DbSet<DocumentType> DocumentTypes { get; set; }
+
     public virtual DbSet<DocumentView> DocumentViews { get; set; }
 
     public virtual DbSet<Fee> Fees { get; set; }
@@ -55,7 +57,9 @@ public partial class NamunaCollegeContext : DbContext
 
     public virtual DbSet<TeacherView> TeacherViews { get; set; }
 
-    public virtual DbSet<Upload> Uploads { get; set; }
+    public virtual DbSet<UploadFile> UploadFiles { get; set; }
+
+    public virtual DbSet<UploadFileView> UploadFileViews { get; set; }
 
     public virtual DbSet<User> Users { get; set; }
 
@@ -80,19 +84,23 @@ public partial class NamunaCollegeContext : DbContext
 
         modelBuilder.Entity<Document>(entity =>
         {
-            entity.HasKey(e => e.DocId).HasName("PK__Document__3EF188AD8CB939F5");
+            entity.HasKey(e => e.DocId).HasName("PK__Document__3EF188AD9172E1CA");
 
             entity.ToTable("Document");
-
-            entity.HasOne(d => d.Upload).WithMany(p => p.Documents)
-                .HasForeignKey(d => d.UploadId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Document__Upload__47DBAE45");
 
             entity.HasOne(d => d.User).WithMany(p => p.Documents)
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Document__UserId__48CFD27E");
+                .HasConstraintName("FK__Document__UserId__4F47C5E3");
+        });
+
+        modelBuilder.Entity<DocumentType>(entity =>
+        {
+            entity.HasKey(e => e.TypeId).HasName("PK__Document__516F03B5645A3D04");
+
+            entity.ToTable("DocumentType");
+
+            entity.Property(e => e.DocumetCat).HasMaxLength(100);
         });
 
         modelBuilder.Entity<DocumentView>(entity =>
@@ -447,14 +455,37 @@ public partial class NamunaCollegeContext : DbContext
             entity.Property(e => e.UserEmail).HasMaxLength(30);
         });
 
-        modelBuilder.Entity<Upload>(entity =>
+        modelBuilder.Entity<UploadFile>(entity =>
         {
-            entity.HasKey(e => e.UploadId).HasName("PK__Upload__6D16C84DA1511A27");
+            entity.HasKey(e => e.UploadId).HasName("PK__UploadFi__6D16C84D46354C20");
 
-            entity.ToTable("Upload");
+            entity.ToTable("UploadFile");
 
-            entity.Property(e => e.Docs).HasColumnName("docs");
-            entity.Property(e => e.DocumentType).HasColumnName("documentType");
+            entity.Property(e => e.DocFile).HasColumnName("docFile");
+
+            entity.HasOne(d => d.Doc).WithMany(p => p.UploadFiles)
+                .HasForeignKey(d => d.DocId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__UploadFil__DocId__5F7E2DAC");
+
+            entity.HasOne(d => d.Type).WithMany(p => p.UploadFiles)
+                .HasForeignKey(d => d.TypeId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__UploadFil__TypeI__607251E5");
+        });
+
+        modelBuilder.Entity<UploadFileView>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("UploadFileView");
+
+            entity.Property(e => e.DocFile).HasColumnName("docFile");
+            entity.Property(e => e.DocumetCat).HasMaxLength(100);
+            entity.Property(e => e.FullName).HasMaxLength(20);
+            entity.Property(e => e.Phone).HasMaxLength(10);
+            entity.Property(e => e.UserAddress).HasMaxLength(30);
+            entity.Property(e => e.UserEmail).HasMaxLength(30);
         });
 
         modelBuilder.Entity<User>(entity =>

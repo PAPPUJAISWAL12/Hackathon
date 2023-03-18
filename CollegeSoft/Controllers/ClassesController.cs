@@ -88,7 +88,7 @@ namespace CollegeSoft.Controllers
 
             return CreatedAtAction("GetClass", new { id = c.Cid }, c);
         }
-
+/*
         // DELETE: api/Classes/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteClass(int id)
@@ -108,7 +108,7 @@ namespace CollegeSoft.Controllers
 
             return NoContent();
         }
-
+*/
         private bool ClassExists(int id)
         {
             return (_context.Classes?.Any(e => e.Cid == id)).GetValueOrDefault();

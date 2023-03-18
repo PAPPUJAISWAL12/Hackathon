@@ -22,30 +22,23 @@ namespace CollegeSoft.Controllers
 
         // GET: api/Teachers
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Teacher>>> GetTeachers()
+        public async Task<ActionResult<IEnumerable<TeacherView>>> GetTeachers()
         {
-          if (_context.Teachers == null)
-          {
-              return NotFound();
-          }
-            return await _context.Teachers.ToListAsync();
+          
+            return await _context.TeacherViews.ToListAsync();
         }
 
         // GET: api/Teachers/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Teacher>> GetTeacher(int id)
+        public ActionResult<TeacherView> GetTeacher(int id)
         {
-          if (_context.Teachers == null)
-          {
-              return NotFound();
-          }
-            var teacher = await _context.Teachers.FindAsync(id);
+          
+            var teacher =  _context.TeacherViews.Where(x=>x.UserId==id).FirstOrDefault();
 
             if (teacher == null)
             {
                 return NotFound();
             }
-
             return teacher;
         }
 
@@ -83,16 +76,36 @@ namespace CollegeSoft.Controllers
         // POST: api/Teachers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Teacher>> PostTeacher(Teacher teacher)
+        public async Task<ActionResult<TeacherEdit>> PostTeacher(TeacherEdit edit)
         {
-          if (_context.Teachers == null)
-          {
-              return Problem("Entity set 'NamunaCollegeContext.Teachers'  is null.");
-          }
-            _context.Teachers.Add(teacher);
+            User u = new User
+            {
+                UserId = edit.UserId,
+                UserAddress=edit.UserAddress,
+                UserEmail=edit.UserEmail,
+                Upassword=edit.Upassword,
+                FullName=edit.FullName,
+                LoginStatus=edit.LoginStatus
+            };
+            _context.Users.Add(u);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetTeacher", new { id = teacher.Tid }, teacher);
+            Teacher t = new Teacher
+            {
+                UserId=u.UserId,
+                Tpost=edit.Tpost
+            };
+            _context.Teachers.Add(t);
+            await _context.SaveChangesAsync();
+
+			UserRole r = new UserRole
+			{
+				UserId = u.UserId,
+				RoleId = edit.RoleId
+			};
+			_context.UserRoles.Add(r);
+			await _context.SaveChangesAsync();
+			return Ok();
         }
 
         // DELETE: api/Teachers/5

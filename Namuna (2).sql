@@ -27,18 +27,28 @@ RoleId int Not Null foreign key references RoleList(RoleId)
 select UserId,RoleId,RoleName,UserEmail,(case when ( select UserRoleId from UserRole where Userid=Users.UserId and RoleId=Rolelist.RoleId) is null then 0 else 1 end)as HasRole from RoleList cross join Users
 */
 
-create table Upload(
+create table UploadFile(
 UploadId int primary key identity(1,1) not null,
-documentType nvarchar(max) not null,
-docs nvarchar(max)  null
+DocId int not null foreign key references Document(DocId),
+TypeId int not null foreign key references DocumentType(TypeId),
+docFile nvarchar(max)  null
 );
+/*
+create View UploadFileView as
+select UploadId,UploadFile.DocId,UploadFile.TypeId,docFile,DocumetCat,FullName,UserAddress,Phone,UserEmail from UploadFile join DocumentView on UploadFile.DocId=DocumentView.DocId join DocumentType on UploadFile.TypeId=DocumentType.TypeId
+*/
+create table DocumentType(
+TypeId int primary key identity(1,1) Not null,
+DocumetCat Nvarchar(100) not null
+);
+
 create table Document(
 DocId int primary key identity(1,1) not null,
-UploadId int not null foreign key references Upload(UploadId),
 UserId int not null foreign key references Users(UserId)
 );
-/*create View DocumentView as
-select DocId,Document.UploadId,Document.UserId,FullName,UserAddress,Phone,UserEmail from Document Join Upload on Document.UploadId=Document.UploadId join Users on Document.UserId=Users.UserId
+/*
+create View DocumentView as
+select DocId,Document.UserId,FullName,UserAddress,Phone,UserEmail from Document Join Users on Document.UserId=Users.UserId
 */
 create table Student(
 StdId int primary key identity(1,1),

@@ -11,45 +11,48 @@ namespace CollegeSoft.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class SubjectsController : ControllerBase
+    public class UploadFilesController : ControllerBase
     {
         private readonly NamunaCollegeContext _context;
 
-        public SubjectsController(NamunaCollegeContext context)
+        public UploadFilesController(NamunaCollegeContext context)
         {
             _context = context;
         }
 
-        // GET: api/Subjects
+        // GET: api/UploadFiles
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<SubjectsView>>> GetSubjects()
+        public async Task<ActionResult<IEnumerable<UploadFileView>>> GetUploadFiles()
         {
-            return await _context.SubjectsViews.ToListAsync();
+         
+            return await _context.UploadFileViews.ToListAsync();
         }
 
-        // GET: api/Subjects/5
+        // GET: api/UploadFiles/5
         [HttpGet("{id}")]
-        public ActionResult<SubjectsView> GetSubject(int id)
+        public ActionResult<UploadFileView> GetUploadFile(int id)
         {
-            var subject = _context.SubjectsViews.Where(x => x.SubId == id).FirstOrDefault();
-            if (subject == null)
+         
+            var uploadFile = _context.UploadFileViews.Where(x=>x.DocId==id).ToList();
+
+            if (uploadFile == null)
             {
                 return NotFound();
             }
-            return subject;
+            return Ok(uploadFile);
         }
 
-        // PUT: api/Subjects/5
+        // PUT: api/UploadFiles/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutSubject(int id, Subject subject)
+        public async Task<IActionResult> PutUploadFile(int id, UploadFile uploadFile)
         {
-            if (id != subject.SubId)
+            if (id != uploadFile.UploadId)
             {
                 return BadRequest();
             }
 
-            _context.Entry(subject).State = EntityState.Modified;
+            _context.Entry(uploadFile).State = EntityState.Modified;
 
             try
             {
@@ -57,7 +60,7 @@ namespace CollegeSoft.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!SubjectExists(id))
+                if (!UploadFileExists(id))
                 {
                     return NotFound();
                 }
@@ -70,41 +73,41 @@ namespace CollegeSoft.Controllers
             return NoContent();
         }
 
-        // POST: api/Subjects
+        // POST: api/UploadFiles
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Subject>> PostSubject(Subject subject)
+        public async Task<ActionResult<UploadFile>> PostUploadFile(UploadFile uploadFile)
         {
           
-            _context.Subjects.Add(subject);
+            _context.UploadFiles.Add(uploadFile);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetSubject", new { id = subject.SubId }, subject);
+            return CreatedAtAction("GetUploadFile", new { id = uploadFile.UploadId }, uploadFile);
         }
 
-        // DELETE: api/Subjects/5
+        // DELETE: api/UploadFiles/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteSubject(int id)
+        public async Task<IActionResult> DeleteUploadFile(int id)
         {
-            if (_context.Subjects == null)
+            if (_context.UploadFiles == null)
             {
                 return NotFound();
             }
-            var subject = await _context.Subjects.FindAsync(id);
-            if (subject == null)
+            var uploadFile = await _context.UploadFiles.FindAsync(id);
+            if (uploadFile == null)
             {
                 return NotFound();
             }
 
-            _context.Subjects.Remove(subject);
+            _context.UploadFiles.Remove(uploadFile);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool SubjectExists(int id)
+        private bool UploadFileExists(int id)
         {
-            return (_context.Subjects?.Any(e => e.SubId == id)).GetValueOrDefault();
+            return (_context.UploadFiles?.Any(e => e.UploadId == id)).GetValueOrDefault();
         }
     }
 }

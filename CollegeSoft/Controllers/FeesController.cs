@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CollegeSoft.Models;
+using System.Runtime.CompilerServices;
+using Azure;
+using Microsoft.AspNetCore.JsonPatch;
 
 namespace CollegeSoft.Controllers
 {
@@ -24,7 +27,7 @@ namespace CollegeSoft.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<FeeDetailsView>>> GetFees()
         {
-          
+
             return await _context.FeeDetailsViews.ToListAsync();
         }
 
@@ -32,8 +35,8 @@ namespace CollegeSoft.Controllers
         [HttpGet("{id}")]
         public ActionResult<FeeDetailsView> GetFee(int id)
         {
-          
-            var feeDetails = _context.FeeDetailsViews.Where(x=>x.FeeId==id).FirstOrDefault();
+
+            var feeDetails = _context.FeeDetailsViews.Where(x => x.FeeId == id).FirstOrDefault();
 
             if (feeDetails == null)
             {
@@ -45,39 +48,23 @@ namespace CollegeSoft.Controllers
 
         // PUT: api/Fees/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutFee(int id, Fee fee)
+        [HttpPatch("{id}")]
+        public async Task<ActionResult<Fee>> PatchFee(int id, [FromBody] JsonPatchDocument<Fee> patchdoc)
         {
-            if (id != fee.FeeId)
+            Fee? f = _context.Fees.FirstOrDefault(a => a.FeeId == id);
+            if (f == null)
             {
-                return BadRequest();
+                return NotFound();
             }
-
-            _context.Entry(fee).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!FeeExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            patchdoc.ApplyTo(f);
+            await _context.SaveChangesAsync();            
+            return Ok(f);
         }
 
         // POST: api/Fees
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<FeeEdit>> PostFee(FeeEdit edit)
+        public async Task<ActionResult<FeePrintView>> PostFee(FeeEdit edit)
         {
             edit.EntryDate = DateTime.Today;
             edit.EntryTime = DateTime.UtcNow.AddMinutes(345).ToShortTimeString();
@@ -114,10 +101,11 @@ namespace CollegeSoft.Controllers
                 DetailId=details.DetailId,
 				PrintDate=fee.EntryDate,
 				PrintTime=fee.EntryTime,
-				PrintUserId= fee.EntryBy
+				PrintUserId= (int)fee.EntryBy
             };
-
-           
+            _context.FeePrints.Add(print);
+            await _context.SaveChangesAsync();
+            return Ok(_context.FeePrintViews.Where(x=>x.PrintId==print.PrintId).FirstOrDefault());
         }
 
        /* // DELETE: api/Fees/5

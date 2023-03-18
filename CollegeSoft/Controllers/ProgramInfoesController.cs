@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CollegeSoft.Models;
+using Microsoft.AspNetCore.JsonPatch;
+using Microsoft.AspNetCore.Mvc.ApplicationModels;
 
 namespace CollegeSoft.Controllers
 {
@@ -22,98 +24,65 @@ namespace CollegeSoft.Controllers
 
         // GET: api/ProgramInfoes
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ProgramInfo>>> GetProgramInfos()
+        public async Task<ActionResult<IEnumerable<PrograInfoView>>> GetProgramInfos()
         {
-          if (_context.ProgramInfos == null)
-          {
-              return NotFound();
-          }
-            return await _context.ProgramInfos.ToListAsync();
+         
+            return await _context.PrograInfoViews.ToListAsync();
         }
 
         // GET: api/ProgramInfoes/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<ProgramInfo>> GetProgramInfo(int id)
-        {
-          if (_context.ProgramInfos == null)
-          {
-              return NotFound();
-          }
-            var programInfo = await _context.ProgramInfos.FindAsync(id);
+        public ActionResult<PrograInfoView> GetProgramInfo(int id)
+        {         
+            PrograInfoView? programInfo =  _context.PrograInfoViews.Where(x=>x.Pid==id).FirstOrDefault();
 
             if (programInfo == null)
             {
                 return NotFound();
             }
-
             return programInfo;
         }
 
-        // PUT: api/ProgramInfoes/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutProgramInfo(int id, ProgramInfo programInfo)
+		// PUT: api/ProgramInfoes/5
+		// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+
+		[HttpPatch("{id}")]
+		public IActionResult PatchReception(int id, [FromBody] JsonPatchDocument<ProgramInfo> patchdoc)
+		{
+			ProgramInfo? p = _context.ProgramInfos.FirstOrDefault(x => x.Pid == id);
+			if (p == null)
+			{
+				return NotFound();
+			}
+			patchdoc.ApplyTo(p);
+			_context.SaveChanges();
+			return Ok(p);
+		}
+		// POST: api/ProgramInfoes
+		// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+		[HttpPost]
+        public async Task<ActionResult<ProgramInfoEdit>> PostProgramInfo(ProgramInfoEdit info)
         {
-            if (id != programInfo.Pid)
+            info.EntryDate = DateTime.Today;
+            ProgramInfo p = new ProgramInfo
             {
-                return BadRequest();
-            }
-
-            _context.Entry(programInfo).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ProgramInfoExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
-        // POST: api/ProgramInfoes
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<ProgramInfo>> PostProgramInfo(ProgramInfo programInfo)
-        {
-          if (_context.ProgramInfos == null)
-          {
-              return Problem("Entity set 'NamunaCollegeContext.ProgramInfos'  is null.");
-          }
-            _context.ProgramInfos.Add(programInfo);
+               Pname=info.Pname,
+               Pdescription=info.Pdescription,
+               Venue=info.Venue,
+               StartDate=info.StartDate,
+               StartTime=info.StartTime,
+               EndDate=info.EndDate,
+               EndTime=info.EndTime,
+               UserId=info.UserId,
+               EntryDate=info.EntryDate
+            };
+            _context.ProgramInfos.Add(p);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetProgramInfo", new { id = programInfo.Pid }, programInfo);
+            return Ok(info);
         }
 
-        // DELETE: api/ProgramInfoes/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteProgramInfo(int id)
-        {
-            if (_context.ProgramInfos == null)
-            {
-                return NotFound();
-            }
-            var programInfo = await _context.ProgramInfos.FindAsync(id);
-            if (programInfo == null)
-            {
-                return NotFound();
-            }
-
-            _context.ProgramInfos.Remove(programInfo);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
+       
 
         private bool ProgramInfoExists(int id)
         {
