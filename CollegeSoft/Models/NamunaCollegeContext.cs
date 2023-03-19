@@ -68,7 +68,7 @@ public partial class NamunaCollegeContext : DbContext
     public virtual DbSet<UserRoleView> UserRoleViews { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseSqlServer("Name=Conn");
+        => optionsBuilder.UseSqlServer("name=Conn");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -117,7 +117,7 @@ public partial class NamunaCollegeContext : DbContext
 
         modelBuilder.Entity<Fee>(entity =>
         {
-            entity.HasKey(e => e.FeeId).HasName("PK__Fee__E09FF2033CFEB926");
+            entity.HasKey(e => e.FeeId).HasName("PK__Fee__E09FF2032A73C18B");
 
             entity.ToTable("Fee");
 
@@ -134,21 +134,21 @@ public partial class NamunaCollegeContext : DbContext
 
             entity.HasOne(d => d.CancelledByNavigation).WithMany(p => p.FeeCancelledByNavigations)
                 .HasForeignKey(d => d.CancelledBy)
-                .HasConstraintName("FK__Fee__CancelledBy__3E1D39E1");
+                .HasConstraintName("FK__Fee__CancelledBy__0697FACD");
 
             entity.HasOne(d => d.EntryByNavigation).WithMany(p => p.FeeEntryByNavigations)
                 .HasForeignKey(d => d.EntryBy)
-                .HasConstraintName("FK__Fee__EntryBy__3D2915A8");
+                .HasConstraintName("FK__Fee__EntryBy__05A3D694");
 
             entity.HasOne(d => d.Std).WithMany(p => p.Fees)
                 .HasForeignKey(d => d.StdId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Fee__stdId__3C34F16F");
+                .HasConstraintName("FK__Fee__stdId__04AFB25B");
         });
 
         modelBuilder.Entity<FeeDetail>(entity =>
         {
-            entity.HasKey(e => e.DetailId).HasName("PK__feeDetai__135C316DF28409CE");
+            entity.HasKey(e => e.DetailId).HasName("PK__feeDetai__135C316D309CC6C6");
 
             entity.ToTable("feeDetails");
 
@@ -161,7 +161,7 @@ public partial class NamunaCollegeContext : DbContext
             entity.HasOne(d => d.Fee).WithMany(p => p.FeeDetails)
                 .HasForeignKey(d => d.FeeId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__feeDetail__feeId__42E1EEFE");
+                .HasConstraintName("FK__feeDetail__feeId__09746778");
         });
 
         modelBuilder.Entity<FeeDetailsView>(entity =>
@@ -192,7 +192,7 @@ public partial class NamunaCollegeContext : DbContext
 
         modelBuilder.Entity<FeePrint>(entity =>
         {
-            entity.HasKey(e => e.PrintId).HasName("PK__FeePrint__26C7BA7DF1A7A38B");
+            entity.HasKey(e => e.PrintId).HasName("PK__FeePrint__26C7BA7DF3B0087F");
 
             entity.ToTable("FeePrint");
 
@@ -202,12 +202,12 @@ public partial class NamunaCollegeContext : DbContext
             entity.HasOne(d => d.Detail).WithMany(p => p.FeePrints)
                 .HasForeignKey(d => d.DetailId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__FeePrint__Detail__46B27FE2");
+                .HasConstraintName("FK__FeePrint__Detail__0D44F85C");
 
             entity.HasOne(d => d.PrintUser).WithMany(p => p.FeePrints)
                 .HasForeignKey(d => d.PrintUserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__FeePrint__PrintU__45BE5BA9");
+                .HasConstraintName("FK__FeePrint__PrintU__0C50D423");
         });
 
         modelBuilder.Entity<FeePrintView>(entity =>
@@ -284,7 +284,7 @@ public partial class NamunaCollegeContext : DbContext
 
         modelBuilder.Entity<ProgramInfo>(entity =>
         {
-            entity.HasKey(e => e.Pid).HasName("PK__ProgramI__C57755207AB2019D");
+            entity.HasKey(e => e.Pid).HasName("PK__ProgramI__C5775520EF9C9601");
 
             entity.ToTable("ProgramInfo");
 
@@ -302,13 +302,12 @@ public partial class NamunaCollegeContext : DbContext
 
             entity.HasOne(d => d.Cancelled).WithMany(p => p.ProgramInfoCancelleds)
                 .HasForeignKey(d => d.CancelledId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__ProgramIn__Cance__25518C17");
+                .HasConstraintName("FK__ProgramIn__Cance__01D345B0");
 
             entity.HasOne(d => d.User).WithMany(p => p.ProgramInfoUsers)
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__ProgramIn__UserI__245D67DE");
+                .HasConstraintName("FK__ProgramIn__UserI__00DF2177");
         });
 
         modelBuilder.Entity<Reception>(entity =>

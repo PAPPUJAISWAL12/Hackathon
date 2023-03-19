@@ -30,9 +30,9 @@ namespace CollegeSoft.Controllers
 
         // GET: api/Students/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<StudentView>> GetStudent(int id)
+        public ActionResult<StudentView> GetStudent(int id)
         {          
-            var student =  _context.StudentViews.Where(x=>x.StdId==id).FirstOrDefault();
+            var student =  _context.StudentViews.Where(x=>x.UserId==id).FirstOrDefault();
 
             if (student == null)
             {
@@ -84,8 +84,8 @@ namespace CollegeSoft.Controllers
                 FullName=edit.FullName,
                 UserAddress=edit.UserAddress,
                 Phone=edit.Phone,
-                Upassword=edit.Upassword,
-                LoginStatus=edit.LoginStatus
+                Upassword=edit.Upassword
+                
             };
             _context.Users.Add(u);
             await _context.SaveChangesAsync();

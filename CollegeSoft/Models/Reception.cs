@@ -3,11 +3,10 @@ using System.Collections.Generic;
 
 namespace CollegeSoft.Models;
 
-public partial class Reception:ReceptionEdit
-{
- 
+public partial class Reception: ReceptionEdit
+{  
 
-    public virtual User CancelledBy { get; set; } = null!;
+    public virtual User? CancelledBy { get; set; }
 
     public virtual User User { get; set; } = null!;
 }

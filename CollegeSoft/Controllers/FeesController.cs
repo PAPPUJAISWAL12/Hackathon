@@ -27,7 +27,6 @@ namespace CollegeSoft.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<FeeDetailsView>>> GetFees()
         {
-
             return await _context.FeeDetailsViews.ToListAsync();
         }
 
@@ -35,7 +34,6 @@ namespace CollegeSoft.Controllers
         [HttpGet("{id}")]
         public ActionResult<FeeDetailsView> GetFee(int id)
         {
-
             var feeDetails = _context.FeeDetailsViews.Where(x => x.FeeId == id).FirstOrDefault();
 
             if (feeDetails == null)
@@ -79,8 +77,7 @@ namespace CollegeSoft.Controllers
 				EntryBy=edit.EntryBy,
 				EntryDate=edit.EntryDate,
 				EntryTime=edit.EntryTime,
-				CancelledDate=edit.CancelledDate,
-				CancelledBy=edit.CancelledBy,
+				
 			};
             _context.Fees.Add(fee);
             await _context.SaveChangesAsync();
@@ -101,10 +98,11 @@ namespace CollegeSoft.Controllers
                 DetailId=details.DetailId,
 				PrintDate=fee.EntryDate,
 				PrintTime=fee.EntryTime,
-				PrintUserId= (int)fee.EntryBy
+				PrintUserId= fee.EntryBy
             };
             _context.FeePrints.Add(print);
             await _context.SaveChangesAsync();
+
             return Ok(_context.FeePrintViews.Where(x=>x.PrintId==print.PrintId).FirstOrDefault());
         }
 

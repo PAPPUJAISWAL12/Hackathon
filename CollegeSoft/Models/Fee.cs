@@ -17,19 +17,19 @@ public partial class Fee
 
     public decimal Examfee { get; set; }
 
-    public string FiscalYear { get; set; } = null!;
+    public string FiscalYear { get; set; }
 
-    public int? EntryBy { get; set; }
+    public int EntryBy { get; set; }
 
     public DateTime EntryDate { get; set; }
 
     public string EntryTime { get; set; } = null!;
 
-    public DateTime CancelledDate { get; set; }
+    public DateTime? CancelledDate { get; set; }
 
     public int? CancelledBy { get; set; }
 
-    public string ResonForCancelled { get; set; } = null!;
+    public string? ResonForCancelled { get; set; }
 
     public virtual User? CancelledByNavigation { get; set; }
 

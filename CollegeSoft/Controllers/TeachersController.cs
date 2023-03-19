@@ -85,7 +85,8 @@ namespace CollegeSoft.Controllers
                 UserEmail=edit.UserEmail,
                 Upassword=edit.Upassword,
                 FullName=edit.FullName,
-                LoginStatus=edit.LoginStatus
+                LoginStatus=edit.LoginStatus,
+                Phone=edit.Phone
             };
             _context.Users.Add(u);
             await _context.SaveChangesAsync();

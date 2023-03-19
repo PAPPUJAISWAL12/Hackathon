@@ -71,9 +71,9 @@ FiscalYear nvarchar(20) not null,
 EntryBy int Foreign Key References Users(UserId),
 EntryDate date not null,
 EntryTime Nvarchar(20) not null,
-CancelledDate Date not null,
+CancelledDate Date  null,
 CancelledBy int foreign key references Users(UserId),
-ResonForCancelled Nvarchar(max) not null
+ResonForCancelled Nvarchar(max)  null
 );
 
 /*
@@ -107,6 +107,7 @@ Fee.stdId=StudentView.StdId
  PrintUserId int not null foreign key references Users(UserId),
  DetailId int not null foreign key references feeDetails(DetailId)
  );
+
  /*
  create View FeePrintView as
  select PrintId,PrintDate,PrintTime,PrintUserId,FeePrint.DetailId,FullName,Cname,UserEmail,UserAddress,Phone ,MonthlyFeeAmt,YearlyAmt,YearlyDiscount,Examfee,FiscalYear,EntryUser,EntryBy,TotalAmt,PaidAmt,RemainingAmt,FeeStatus,PrintCount,CancelledBy,CancelledDate,CancelledUser,ResonForCancelled from FeePrint join FeeDetailsView on FeePrint.DetailId=FeeDetailsView.DetailId
@@ -143,10 +144,11 @@ FiscalYear,ReceptionStatus from Reception
  EndTime nvarchar(20) not null,
  UserId int not null foreign key references Users(UserId),
  EntryDate Date not null,
- CancelledId int not null foreign key references Users(UserId),
- CancelledDate date not null,
- ReasonForCancell Nvarchar(max) not null,
+ CancelledId int null foreign key references Users(UserId),
+ CancelledDate date  null,
+ ReasonForCancell Nvarchar(max)  null,
  );
+ 
  /*
  Create View PrograInfoView as
  select PID,PName,PDescription,Venue,StartDate,StartTime,EndDate,EndTime,UserId,(select FullName from Users where UserId=ProgramInfo.UserId)as EntryUser,

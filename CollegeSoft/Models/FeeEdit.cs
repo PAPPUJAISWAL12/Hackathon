@@ -14,7 +14,7 @@
 
 		public decimal Examfee { get; set; }
 
-		public string? FiscalYear { get; set; }
+		public string FiscalYear { get; set; }
 
 		public int EntryBy { get; set; }
 
@@ -22,9 +22,9 @@
 
 		public string? EntryTime { get; set; } 
 
-		public DateTime CancelledDate { get; set; }
+		
 
-		public int? CancelledBy { get; set; }
+		
 
 
 		public int DetailId { get; set; }		
@@ -35,7 +35,7 @@
 
 		public decimal RemainingAmt { get; set; }
 
-		public string? FeeStatus { get; set; }
+		public string FeeStatus { get; set; }
 
 
 		public int PrintId { get; set; }

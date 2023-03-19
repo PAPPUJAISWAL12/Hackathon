@@ -22,31 +22,23 @@ namespace CollegeSoft.Controllers
 
         // GET: api/UserRoles
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<UserRole>>> GetUserRoles()
+        public async Task<ActionResult<IEnumerable<UserRoleView>>> GetUserRoles()
         {
-          if (_context.UserRoles == null)
-          {
-              return NotFound();
-          }
-            return await _context.UserRoles.ToListAsync();
+          
+            return await _context.UserRoleViews.ToListAsync();
         }
 
         // GET: api/UserRoles/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<UserRole>> GetUserRole(int id)
+        public ActionResult<UserRoleView> GetUserRole(int id)
         {
-          if (_context.UserRoles == null)
-          {
-              return NotFound();
-          }
-            var userRole = await _context.UserRoles.FindAsync(id);
-
+          
+            var userRole =  _context.UserRoleViews.Where(x=>x.UserId==id).ToList();
             if (userRole == null)
             {
                 return NotFound();
             }
-
-            return userRole;
+            return Ok(userRole);
         }
 
         // PUT: api/UserRoles/5

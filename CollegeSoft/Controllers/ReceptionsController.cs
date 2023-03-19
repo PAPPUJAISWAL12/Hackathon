@@ -82,7 +82,7 @@ namespace CollegeSoft.Controllers
             _context.Receptions.Add(r);
             await _context.SaveChangesAsync();
 
-            return Ok(r);
+            return Ok(reception);
         }
 
        /* // DELETE: api/Receptions/5
